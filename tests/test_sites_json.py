@@ -22,13 +22,15 @@ def test_sites_duplicates():
         data = json.load(fin)
     # get a dictionary where the keys are the primary names and the data are the aliases
     # primary names are already required to be unique, so this will not have collisions
-    all_names = {x: set([x] + data[x]["aliases"]) for x in data}
+    all_names = {x.lower(): {y.lower() for y in [x] + data[x]["aliases"]} for x in data}
     # then find all names/aliases that were used
     # only insert after checking for duplication so we don't overwrite previous entries
     # the keys will be all of the aliases, and the values will be the primary names
     used_names = {}
     for k, v in all_names.items():
         for n in v:
+            if len(n) == 0:
+                continue
             if n not in used_names:
                 used_names[n] = k
             else:
